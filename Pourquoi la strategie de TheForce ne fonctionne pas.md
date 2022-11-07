@@ -1,4 +1,5 @@
 # **Pourquoi la stratégie de TheForce ne fonctionne pas**
+Document original [ici](https://brookmiles.github.io/freqtrade-stuff/2021/03/29/why-theforce-doesnt-work/)
 
 29-03-2021
 
