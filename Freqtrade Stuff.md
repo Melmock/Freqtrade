@@ -54,41 +54,34 @@ Une anomalie de backtesting qui semble produire des résultats incroyables, on p
 
 Voici un exemple de stratégie qui exploite cette caractéristique. Elle n'utilise aucun signal, et achète simplement sur chaque bougie sur une échelle de temps d'une heure. Les ventes ont lieu lorsque le retour sur investissement minimum de 1 % est atteint, ou lorsque le trailing stops de 0,1 % est atteint.
 
+```
 from freqtrade.strategy.interface import IStrategy
-
 from typing import Dict, List
-
 from pandas import DataFrame
 
-class Magic\_Trailing\_Stoploss(IStrategy):
+class Magic_Trailing_Stoploss(IStrategy):
 
-`    `minimal\_roi = { "0": 0.01 }
+    minimal_roi = { "0": 0.01 }
 
-`    `stoploss = -0.01
+    stoploss = -0.01
 
+    trailing_stop = True
+    trailing_stop_positive = 0.001
 
+    timeframe = '1h'
 
-`    `trailing\_stop = True
+    def populate_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+        return dataframe
 
-`    `trailing\_stop\_positive = 0.001
+    def populate_buy_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+        dataframe['buy'] = 1
+        return dataframe
 
-`    `timeframe = '1h'
+    def populate_sell_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+        dataframe['sell'] = 0
+        return dataframe
 
-`    `def populate\_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
-
-`        `return dataframe
-
-`    `def populate\_buy\_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
-
-`        `dataframe['buy'] = 1
-
-`        `return dataframe
-
-`    `def populate\_sell\_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
-
-`        `dataframe['sell'] = 0
-
-`        `return dataframe
+```
 
 
 
@@ -148,57 +141,45 @@ Voici une stratégie simple qui utilise un simple croisement d'EMA pour génére
 
 - [EMA_Trailing_Stoploss](https://github.com/brookmiles/freqtrade-stuff/blob/main/strategies/examples/EMA_Trailing_Stoploss.py)
 
+```
 from freqtrade.strategy import IStrategy
-
 from typing import Dict, List
-
 from pandas import DataFrame
-
 import talib.abstract as ta
-
 import freqtrade.vendor.qtpylib.indicators as qtpylib
 
-class EMA\_Trailing\_Stoploss(IStrategy):
+class EMA_Trailing_Stoploss(IStrategy):
 
-`    `minimal\_roi = { "0": 0.01 }
+    minimal_roi = { "0": 0.01 }
 
-`    `stoploss = -0.01
+    stoploss = -0.01
 
+    trailing_stop = True
+    trailing_stop_positive = 0.001
 
+    timeframe = '1h'
 
-`    `trailing\_stop = True
+    def populate_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
 
-`    `trailing\_stop\_positive = 0.001
+        dataframe['ema3'] = ta.EMA(dataframe, timeperiod=3)
+        dataframe['ema5'] = ta.EMA(dataframe, timeperiod=5)
+        dataframe['go_long'] = qtpylib.crossed_above(dataframe['ema3'], dataframe['ema5']).astype('int')
 
-`    `timeframe = '1h'
+        return dataframe
 
-`    `def populate\_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+    def populate_buy_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+        dataframe.loc[
+            qtpylib.crossed_above(dataframe['go_long'], 0)
+        ,
+        'buy'] = 1
 
-`        `dataframe['ema3'] = ta.EMA(dataframe, timeperiod=3)
+        return dataframe
 
-`        `dataframe['ema5'] = ta.EMA(dataframe, timeperiod=5)
+    def populate_sell_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+        dataframe['sell'] = 0
+        return dataframe
 
-`        `dataframe['go\_long'] = qtpylib.crossed\_above(dataframe['ema3'], dataframe['ema5']).astype('int')
-
-`        `return dataframe
-
-`    `def populate\_buy\_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
-
-`        `dataframe.loc[
-
-`            `qtpylib.crossed\_above(dataframe['go\_long'], 0)
-
-`        `,
-
-`        `'buy'] = 1
-
-`        `return dataframe
-
-`    `def populate\_sell\_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
-
-`        `dataframe['sell'] = 0
-
-`        `return dataframe
+```
 
 Le backtesting montre un bénéfice très respectable de 11%, mais c'est une illusion :
 
@@ -212,97 +193,71 @@ Et la même stratégie après l'avoir convertie pour être backtestée à 5m ou 
 - populate\_indicators vérifie l'horizon temporel et le mode d'exécution, et exécute do\_indicators directement en temps réel, ou l'exécute en utilisant les paires informatives sur une heure, puis fusionne les résultats dans l'horizon temporel principal lors du backtesting.
 - Mettez toute votre création de signaux dans do\_indicators, et lisez seulement les signaux d'achat/vente de populate\_buy\_trend / populate\_sell\_trend.
 
-from freqtrade.strategy import IStrategy, merge\_informative\_pair
-
+```
+from freqtrade.strategy import IStrategy, merge_informative_pair
 from typing import Dict, List
-
 from pandas import DataFrame
-
 import talib.abstract as ta
-
 import freqtrade.vendor.qtpylib.indicators as qtpylib
+from freqtrade.exchange import timeframe_to_minutes
 
-from freqtrade.exchange import timeframe\_to\_minutes
+class EMA_Trailing_Stoploss_LessMagic(IStrategy):
 
-class EMA\_Trailing\_Stoploss\_LessMagic(IStrategy):
+    minimal_roi = { "0": 0.01 }
 
-`    `minimal\_roi = { "0": 0.01 }
+    stoploss = -0.01
 
-`    `stoploss = -0.01
+    trailing_stop = True
+    trailing_stop_positive = 0.001
 
+    timeframe = '5m'
+    informative_timeframe = '1h'
 
+    def informative_pairs(self):
+        pairs = self.dp.current_whitelist()
+        informative_pairs = [(pair, self.informative_timeframe) for pair in pairs]
+        return informative_pairs
 
-`    `trailing\_stop = True
+    def do_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+        dataframe['ema3'] = ta.EMA(dataframe, timeperiod=3)
+        dataframe['ema5'] = ta.EMA(dataframe, timeperiod=5)
+        dataframe['go_long'] = qtpylib.crossed_above(dataframe['ema3'], dataframe['ema5']).astype('int')
+        return dataframe
 
-`    `trailing\_stop\_positive = 0.001
+    def populate_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
 
-`    `timeframe = '5m'
+        if self.config['runmode'].value in ('backtest', 'hyperopt'):
+            assert (timeframe_to_minutes(self.timeframe) <= 5), "Backtest this strategy in 5m or 1m timeframe."
 
-`    `informative\_timeframe = '1h'
+        if self.timeframe == self.informative_timeframe:
+            dataframe = self.do_indicators(dataframe, metadata)
+        else:
+            if not self.dp:
+                return dataframe
 
-`    `def informative\_pairs(self):
+            informative = self.dp.get_pair_dataframe(pair=metadata['pair'], timeframe=self.informative_timeframe)
 
-`        `pairs = self.dp.current\_whitelist()
+            informative = self.do_indicators(informative.copy(), metadata)
 
-`        `informative\_pairs = [(pair, self.informative\_timeframe) for pair in pairs]
+            dataframe = merge_informative_pair(dataframe, informative, self.timeframe, self.informative_timeframe, ffill=True)
+            skip_columns = [(s + "_" + self.informative_timeframe) for s in ['date', 'open', 'high', 'low', 'close', 'volume']]
+            dataframe.rename(columns=lambda s: s.replace("_{}".format(self.informative_timeframe), "") if (not s in skip_columns) else s, inplace=True)
 
-`        `return informative\_pairs
+        return dataframe
 
-`    `def do\_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+    def populate_buy_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+        dataframe.loc[
+            qtpylib.crossed_above(dataframe['go_long'], 0)
+        ,
+        'buy'] = 1
 
-`        `dataframe['ema3'] = ta.EMA(dataframe, timeperiod=3)
+        return dataframe
 
-`        `dataframe['ema5'] = ta.EMA(dataframe, timeperiod=5)
+    def populate_sell_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+        dataframe['sell'] = 0
+        return dataframe
 
-`        `dataframe['go\_long'] = qtpylib.crossed\_above(dataframe['ema3'], dataframe['ema5']).astype('int')
-
-`        `return dataframe
-
-`    `def populate\_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
-
-`        `if self.config['runmode'].value in ('backtest', 'hyperopt'):
-
-`            `assert (timeframe\_to\_minutes(self.timeframe) <= 5), "Backtest this strategy in 5m or 1m timeframe."
-
-`        `if self.timeframe == self.informative\_timeframe:
-
-`            `dataframe = self.do\_indicators(dataframe, metadata)
-
-`        `else:
-
-`            `if not self.dp:
-
-`                `return dataframe
-
-`            `informative = self.dp.get\_pair\_dataframe(pair=metadata['pair'], timeframe=self.informative\_timeframe)
-
-`            `informative = self.do\_indicators(informative.copy(), metadata)
-
-`            `dataframe = merge\_informative\_pair(dataframe, informative, self.timeframe, self.informative\_timeframe, ffill=True)
-
-`            `skip\_columns = [(s + "\_" + self.informative\_timeframe) for s in ['date', 'open', 'high', 'low', 'close', 'volume']]
-
-`            `dataframe.rename(columns=lambda s: s.replace("\_{}".format(self.informative\_timeframe), "") if (not s in skip\_columns) else s, inplace=True)
-
-`        `return dataframe
-
-`    `def populate\_buy\_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
-
-`        `dataframe.loc[
-
-`            `qtpylib.crossed\_above(dataframe['go\_long'], 0)
-
-`        `,
-
-`        `'buy'] = 1
-
-`        `return dataframe
-
-`    `def populate\_sell\_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
-
-`        `dataframe['sell'] = 0
-
-`        `return dataframe
+```
 
 Le backtesting montre maintenant que tous les profits ont disparu, ce qui est beaucoup plus proche de ce qui se passerait en direct, et sera encore plus bas une fois que le spread, le slippage, les ordres non remplis, etc... seront pris en compte.
 
