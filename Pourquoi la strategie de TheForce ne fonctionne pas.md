@@ -34,14 +34,14 @@ dataframe['macdhist'] = macd['histogram']
 Ce qui semble se passer est que ta-lib, pour une raison quelconque, triche en regardant dans le futur par 2 bougies lorsque signalperiod=1.
 Voici une superposition de chaque implémentation utilisant signalperiod=2, les résultats convergent rapidement et se superposent les uns aux autres.
 
-![](images/TheForce1.png)
+![TheForce1](/images/TheForce1.png)
 
 Il s'agit d'une superposition de chaque mise en œuvre en utilisant signalperiod=1, la version ta-lib est tournée vers l'avenir par deux bougies. Vous pouvez voir que la ligne de signal de ta-lib est deux bougies "en avance", prédisant le mouvement futur du prix.
 
-![](images/TheForce2.png)
+![TheForce2](/images/TheForce2.png)
 
 Juste une double vérification, voici chaque implémentation utilisant signalperiod=1, mais la version ta-lib a été avancée de deux bougies en utilisant .shift(2). La ligne macd est maintenant en retard de deux bougies, et la ligne de signal s'aligne à nouveau avec l'implémentation qtpylib.
 
-![](images/TheForce3.png)
+![TheForce3](/images/TheForce3.png)
 
 Malheureusement, la stratégie TheForce se projette dans l'avenir pour prédire la direction du mouvement des prix, ce qui ne peut pas se produire en direct ou en dry-run (simulation en direct), à moins que vous ne soyez un vrai _Jedi_.
