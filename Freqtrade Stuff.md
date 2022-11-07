@@ -1,4 +1,5 @@
 ﻿[Freqtrade Stuff](https://brookmiles.github.io/freqtrade-stuff/)
+ Orignal from Freqtrade [Stuff](https://brookmiles.github.io/freqtrade-stuff/)
 
 **Les pièges du backtesting**
 
