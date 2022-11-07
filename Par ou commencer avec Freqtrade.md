@@ -1,8 +1,8 @@
-﻿**Par où commencer avec Freqtrade**
+# **Par où commencer avec Freqtrade**
 
 Document original [ici](https://brookmiles.github.io/freqtrade-stuff/2021/04/20/where-to-start-with-freqtrade/)
 
-20-04-2021 
+20-04-2021
 
 Bonjour, je suis nouveau. Avez-vous des conseils à donner aux débutants ?
 
@@ -25,14 +25,12 @@ Continuez si vous avez bien compris les conséquences.
 Il y a en gros 3 domaines différents avec lesquels vous devez vous familiariser pour trader avec Freqtrade.
 
 1. La terminologie générale du trading et l'analyse technique.
-1. Une base de compétences techniques et des connaissances de base en programmation. La capacité de lire et de comprendre le code Python.
-1. Comment utiliser Freqtrade spécifiquement, ses caractéristiques et ses limites.
+2. Une base de compétences techniques et des connaissances de base en programmation. La capacité de lire et de comprendre le code Python.
+3. Comment utiliser Freqtrade spécifiquement, ses caractéristiques et ses limites.
 
+**1. Trading en général**
 
-
-1. Trading en général
-
-Vous devez avoir une compréhension de base du fonctionnement du trading en général. Assurez-vous de comprendre les termes : *market order* (ordre de marché), *limit order* (ordre à cours limité) et la différence entre eux, *bid-ask spread (l'écart entre l'offre et la demande)*, *volume*, *slippage*, le fonctionnement du carnet d'ordres (*order book*), le trading au comptant par rapport au trading sur marge (*spot* vs. *margin* trading), le fonctionnement d'un ordre *stop-loss order*.
+Vous devez avoir une compréhension de base du fonctionnement du trading en général. Assurez-vous de comprendre les termes : _market order_ (ordre de marché), _limit order_ (ordre à cours limité) et la différence entre eux, _bid-ask spread (l'écart entre l'offre et la demande)_, _volume_, _slippage_, le fonctionnement du carnet d'ordres (_order book_), le trading au comptant par rapport au trading sur marge (_spot_ vs. _margin_ trading), le fonctionnement d'un ordre _stop-loss order_.
 
 Toutes ces informations sont communes au trading classique et au trading de crypto-monnaies, cherchez-les sur Google ou [Investopedia](https://www.investopedia.com/).
 
@@ -52,9 +50,7 @@ Assurez-vous de lire non seulement ce que les indicateurs montrent directement, 
 
 - [Comment combiner les indicateurs de trading](https://youtu.be/QdbKApfwF-g)
 
-
-
-1. Compétences en programmation
+**2. Compétences en programmation**
 
 Je ne recommande pas d'utiliser Freqtrade sans avoir au moins une compréhension de base des principes fondamentaux de la programmation et du langage Python.
 
@@ -68,9 +64,7 @@ D'une manière plus générale, les performances des stratégies varient en fonc
 
 Si vous n'êtes pas à l'aise ou intéressé par l'apprentissage des bases de Python, Freqtrade n'est peut-être pas la meilleure solution pour vous.
 
-
-
-1. Particularités de Freqtrade
+**3. Particularités de Freqtrade**
 
 Quelques points essentiels :
 
@@ -81,15 +75,16 @@ Freqtrade ne prend en charge que le trading au comptant (spot trading). Vous ne 
 
 Freqtrade ne prend pas en charge le cumul de positions. Vous ne pouvez pas utiliser Freqtrade pour acheter progressivement plus d'une pièce. Une fois qu'une transaction est ouverte, elle doit être vendue avant qu'une autre transaction puisse être effectuée pour la même pièce.
 
-1. Démarrage
+**4. Démarrage**
+
 1. Installez Freqtrade en suivant les instructions du [site officiel](https://www.freqtrade.io/), soit en utilisant Docker, soit directement sur votre machine.
-1. Récupérez les stratégies gratuites fournies dans un autre dépôt github que le programme freqtrade : [freqtrade-strategies](https://github.com/freqtrade/freqtrade-strategies). Certaines des stratégies rassemblées sous user\_data/strategies/berlinguyinca/ en particulier sont d'excellents points de départ ou références pour développer vos propres stratégies, et seront souvent mentionnées par d'autres utilisateurs de Freqtrade.
-1. Téléchargez les données que vous devrez utiliser pour le backtesting en utilisant la commande [download-data](https://www.freqtrade.io/en/stable/data-download/).
-1. Reportez-vous à la documentation sur la [configuration](https://www.freqtrade.io/en/stable/configuration/), car il sera nécessaire d'apporter des modifications à votre configuration pour pouvoir faire le reste.
-1. Lancez les stratégies de backtesting à l'aide de la commande [backtesting](https://www.freqtrade.io/en/stable/backtesting/).
-1. Une fois que vous avez exécuté un ou deux backtests, utilisez la fonctionnalité [Plotting](https://www.freqtrade.io/en/stable/plotting/) pour visualiser les résultats de vos backtests. Cela peut être incroyablement utile pour comprendre ce que votre stratégie fait réellement. Essayez à la fois les commandes plot-dataframe et plot-profit.
-1. Essayez de développer votre propre stratégie.
-1. Avant de mettre de l'argent réel en jeu, ou même de configurer vos clés d'échange, choisissez une stratégie à exécuter en mode de fonctionnement à sec, qui simulera des transactions en temps réel à l'aide des données publiques fournies par votre bourse.
-1. Configurez Telegram pour surveiller le robot pendant vos essais.
+2. Récupérez les stratégies gratuites fournies dans un autre dépôt github que le programme freqtrade : [freqtrade-strategies](https://github.com/freqtrade/freqtrade-strategies). Certaines des stratégies rassemblées sous user\_data/strategies/berlinguyinca/ en particulier sont d'excellents points de départ ou références pour développer vos propres stratégies, et seront souvent mentionnées par d'autres utilisateurs de Freqtrade.
+3. Téléchargez les données que vous devrez utiliser pour le backtesting en utilisant la commande [download-data](https://www.freqtrade.io/en/stable/data-download/).
+4. Reportez-vous à la documentation sur la [configuration](https://www.freqtrade.io/en/stable/configuration/), car il sera nécessaire d'apporter des modifications à votre configuration pour pouvoir faire le reste.
+5. Lancez les stratégies de backtesting à l'aide de la commande [backtesting](https://www.freqtrade.io/en/stable/backtesting/).
+6. Une fois que vous avez exécuté un ou deux backtests, utilisez la fonctionnalité [Plotting](https://www.freqtrade.io/en/stable/plotting/) pour visualiser les résultats de vos backtests. Cela peut être incroyablement utile pour comprendre ce que votre stratégie fait réellement. Essayez à la fois les commandes plot-dataframe et plot-profit.
+7. Essayez de développer votre propre stratégie.
+8. Avant de mettre de l'argent réel en jeu, ou même de configurer vos clés d'échange, choisissez une stratégie à exécuter en mode de fonctionnement à sec, qui simulera des transactions en temps réel à l'aide des données publiques fournies par votre bourse.
+9. Configurez Telegram pour surveiller le robot pendant vos essais.
 
 Utilisez d'abord la fonction de recherche située en haut du [site officiel de Freqtrade](https://www.freqtrade.io/en/stable/) lorsque vous avez une question sur une commande, un paramètre de configuration ou un sujet spécifique. Si vous ne trouvez pas ce que vous cherchez, vous pouvez demander de l'aide sur [Discord ou Slack](https://www.freqtrade.io/en/stable/#help-discord-slack).
