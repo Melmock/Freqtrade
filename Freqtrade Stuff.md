@@ -1,5 +1,5 @@
-﻿[Freqtrade Stuff](https://brookmiles.github.io/freqtrade-stuff/)
- Orignal from Freqtrade [Stuff](https://brookmiles.github.io/freqtrade-stuff/)
+﻿***[Freqtrade Stuff](https://brookmiles.github.io/freqtrade-stuff/)***
+ Orignal from [Freqtrade Stuff](https://brookmiles.github.io/freqtrade-stuff/)
 
 **Les pièges du backtesting**
 
@@ -87,7 +87,7 @@ class Magic_Trailing_Stoploss(IStrategy):
 
 Maintenant nous faisons un backtest...
 
-![40E0F5B7.tmp](Aspose.Words.cceefcef-1a02-4cdc-afba-69f73efc1fd5.001.png)
+![freqtrade-stuff-001](/images/freqtrade-stuff-001.png)
 
 En seulement 11 jours, nous sommes passés de 2 500 $ à 65 150 $, soit un bénéfice de 2506 % ! Incroyable !
 
@@ -99,7 +99,7 @@ Tout d'abord, jetez un coup d'œil à la durée moyenne des gagnants et des perd
 
 L'utilisation de [plot-dataframe](https://www.freqtrade.io/en/latest/plotting/) peut aider à illustrer ce qui se passe :
 
-![DDF15FDD.tmp](Aspose.Words.cceefcef-1a02-4cdc-afba-69f73efc1fd5.002.png)
+![freqtrade-stuff-002](/images/freqtrade-stuff-002.png)
 
 La plupart des bougies montrent que la transaction a été ouverte et fermée dans la même bougie, ce que le backtesting considère comme 0 minute, ou sur la bougie juste suivante.
 
@@ -183,7 +183,7 @@ class EMA_Trailing_Stoploss(IStrategy):
 
 Le backtesting montre un bénéfice très respectable de 11%, mais c'est une illusion :
 
-![163D1AF3.tmp](Aspose.Words.cceefcef-1a02-4cdc-afba-69f73efc1fd5.003.png)
+![freqtrade-stuff-003](/images/freqtrade-stuff-003.png)
 
 Et la même stratégie après l'avoir convertie pour être backtestée à 5m ou 1m :
 
@@ -261,5 +261,4 @@ class EMA_Trailing_Stoploss_LessMagic(IStrategy):
 
 Le backtesting montre maintenant que tous les profits ont disparu, ce qui est beaucoup plus proche de ce qui se passerait en direct, et sera encore plus bas une fois que le spread, le slippage, les ordres non remplis, etc... seront pris en compte.
 
-![5E478479.tmp](Aspose.Words.cceefcef-1a02-4cdc-afba-69f73efc1fd5.004.png)
-
+![freqtrade-stuff-004](/images/freqtrade-stuff-004.png)
